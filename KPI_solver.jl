@@ -1,5 +1,6 @@
 #------------------------------Defining the structure and the specific instance to be defined by the user---------------------------------------------------------
-
+using Roots
+using PyPlot
 mutable struct KPI_parameters
     ϵ::Float64
     R::Int
@@ -31,7 +32,6 @@ No =0.0
 i = 0
 # remember to define i after running pSRRI as nv-no
 #-------------------------------------------------------------KPI 1------------------------------------------------------------------------------------------------------
-using Roots
 function pSRRI() 
     global No
     #Rᵥ is the target rate of volunteering by the club(s); nᵥ is the total expected number of volunteers in that semester
@@ -53,9 +53,6 @@ function pSRRI()
 end
 #------------------------------------------------------------KPI 2---------------------------------------------------------------------------------
 #Assumption: Every student volunteers at the Rᵥ given the tᵥ and nᵥ from M.S.S. records. [applies on a semesterly basis] 
-
-using PyPlot
-
 function rSRRI()  #=where: nᵥ is the number of M.S.S. volunteers
                                      tᵥ is the total number of hours volunteered 
                                      ϵ is assumed efficiency of SIIE in providing remaining volunteering hours =#
@@ -84,9 +81,6 @@ end
 
 #-----------------------------------------------------------------------KPI 3------------------------------------------------------------------
 #This function tells the number of hours required, as well as the rate at which they must be supplied for each student over the max limit of M.S.S. at a given ϵ
-
-using PyPlot
-
 function pRSRRI()   #=where: nᵥ is the number of M.S.S. volunteers
                                      tᵥ is the total number of hours volunteered 
                                      ϵ is assumed efficiency of SIIE in providing remaining volunteering hours
