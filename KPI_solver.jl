@@ -15,7 +15,7 @@ end
 perf = KPI_parameters()
 #------------------------------Prompting and accepting user input-------------------------------------------------------------------------------------------------------
 println("Welcome to the M.S.S. KPI solver. Please enter the assumed efficiency of SIIE: [Number must be between 0 and 1]")
-perf.ϵ =parse(Float64,readline())
+perf.ϵ = parse(Float64, readline())
 println("Please enter the required number of volunteer hours for each scholarship student: ") #add safety checks later
 perf.R = parse(Float64, readline())
 println("Please enter the number of volunteers for this semester: ")
@@ -25,14 +25,14 @@ perf.Rᵥ = parse(Float64, readline())
 
 #------------------------------------------------------------Defining the constants derived from the struct values-------------------------------------------------------
 const tᵣₑ = perf.R * perf.nᵥ
-const tᵥ = perf.Rᵥ*perf.nᵥ
-const E = perf.ϵ*100
-No =0.0
+const tᵥ = perf.Rᵥ * perf.nᵥ
+const E = perf.ϵ * 100
+No = 0.0
 i = 0
 # remember to define i after running pSRRI as nv-no
 #-------------------------------------------------------------KPI 1------------------------------------------------------------------------------------------------------
 using Roots
-function pSRRI() 
+function pSRRI()
     global No
     #Rᵥ is the target rate of volunteering by the club(s); nᵥ is the total expected number of volunteers in that semester
 
@@ -40,16 +40,23 @@ function pSRRI()
     a = perf.nᵥ .+ 100
     No = round(fzero(F, 0.0, a), digits=3)
     Nₚᵣₒ = round(((No ./ perf.nᵥ) .* 100.0), digits=3)
+
+    println("\n" * "="^80)
+    println(" ANALYSIS REPORT")
+    println("="^80)
+
     if Nₚᵣₒ >= perf.nᵥ
-        x = println("All $(perf.nᵥ) volunteers will have their hours fulfilled at the enterred rate.")
-        return x
+        println("All $(perf.nᵥ) volunteers will have their hours fulfilled at the enterred rate.")
     else
-        y = println("\nIf the Multinational Student Society accomodates $(perf.nᵥ) students this semester, and provides $(perf.Rᵥ) volunteer hours per student, 
-    then $Nₚᵣₒ% of volunteers will have their scholarship hours fulfilled, 
-    given that the SIIE operates at $E% efficiency. 
-    In this case, it works out to $No students from a total of $(perf.nᵥ) volunteers.")
-        return y
+        println("If the Multinational Student Society accommodates $(perf.nᵥ) students this semester,")
+        println("and provides $(perf.Rᵥ) volunteer hours per student:")
+        println("")
+        println("   > $Nₚᵣₒ% of volunteers will have their scholarship hours fulfilled,")
+        println("     given that the SIIE operates at $E% efficiency.")
+        println("")
+        println("   > In this case, it works out to $No students from a total of $(perf.nᵥ) volunteers.")
     end
+    println("="^80)
 end
 #------------------------------------------------------------KPI 2---------------------------------------------------------------------------------
 #Assumption: Every student volunteers at the Rᵥ given the tᵥ and nᵥ from M.S.S. records. [applies on a semesterly basis] 
@@ -57,8 +64,8 @@ end
 using PyPlot
 
 function rSRRI()  #=where: nᵥ is the number of M.S.S. volunteers
-                                     tᵥ is the total number of hours volunteered 
-                                     ϵ is assumed efficiency of SIIE in providing remaining volunteering hours =#
+                                       tᵥ is the total number of hours volunteered 
+                                       ϵ is assumed efficiency of SIIE in providing remaining volunteering hours =#
 
     a = perf.nᵥ ./ 1000 #creating intial # of students 
 
@@ -88,9 +95,9 @@ end
 using PyPlot
 
 function pRSRRI()   #=where: nᵥ is the number of M.S.S. volunteers
-                                     tᵥ is the total number of hours volunteered 
-                                     ϵ is assumed efficiency of SIIE in providing remaining volunteering hours
-                                     i is the remaining number of students with unfulfilled hours=#
+                                      tᵥ is the total number of hours volunteered 
+                                      ϵ is assumed efficiency of SIIE in providing remaining volunteering hours
+                                      i is the remaining number of students with unfulfilled hours=#
 
     NV = (1.0:1.0:perf.nᵥ) #numerical values of students 
 
@@ -109,29 +116,32 @@ function pRSRRI()   #=where: nᵥ is the number of M.S.S. volunteers
 
     if i .> ver
 
-        ab = print("\nInvalid number of remaining students. Remaining students must be less than or equal to ")
+        ab = print("\n[!] Invalid number of remaining students. Remaining students must be less than or equal to ")
         bc = print(ver)
         cd = print(".")
         return ab, bc, cd
     end
     if i ≠ 0
-        x = print("\nIn order to fulfill the scholarship hours for the next $i of the remaining students who volunteered this semester through the M.S.S., a total of ")
-        y = print(round(REM[i], digits=3))
-        z = print(" hours will be required at a rate of ")
-        α = print(round(AVG[i], digits=3))
-        Β = print(" hours per student.")
-        return x, y, z, α, Β
+        println("\n" * "-"^80)
+        println(" REMEDIATION STRATEGY")
+        println("-"^80)
+        println("In order to fulfill the scholarship hours for the next $i of the remaining")
+        println("students who volunteered this semester through the M.S.S.:")
+        println("")
+        println("   • Total Hours Required:  $(round(REM[i], digits=3)) hours")
+        println("   • Rate Required:         $(round(AVG[i], digits=3)) hours per student")
+        println("-"^80)
     end
 end
 
 #------------------------------------------Execution Block---------------------------------------------------------------------------------------------------------------
 pSRRI()
-i = Int(round.(perf.nᵥ .- No))
-inp_str =""
+i = Int(round.(perf.nᵥ - No))
+inp_str = ""
 
-if No <perf.nᵥ
+if No < perf.nᵥ
     pRSRRI()
-    println("\n Type 1 to see this data represented visually by a graph.")
+    println("\nType 1 to see this data represented visually by a graph.")
     inp_str = readline()
     if strip(inp_str) == "1"
         rSRRI()
@@ -140,3 +150,5 @@ if No <perf.nᵥ
     end
 
 end
+
+
